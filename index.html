@@ -184,6 +184,58 @@
             border-radius: 4px;
             color: #667eea;
         }
+
+                .filter-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .filter-btn.active {
+            background: rgba(102, 126, 234, 0.9);
+            border-color: rgba(102, 126, 234, 1);
+        }
+
+        .model-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #a0d8ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .model-card.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -192,6 +244,8 @@
             <h1>3DGS Model Gallery - Elm CV Team</h1>
             <p class="subtitle">Explore stunning 3D Gaussian Splatting models leveraging Splatter App's LOD viewer</p>
         </header>
+
+        <div class="filter-container" id="filterContainer"></div>
 
         <div class="gallery" id="gallery"></div>
     </div>
@@ -202,57 +256,118 @@
             {
                 title: "Residence C20 R4",
                 description: "Drone View 3DGS of a residence",
-                url: "https://splatter.app/s/r24-kks"
+                url: "https://splatter.app/s/r24-kks",
+                tags: ["aerial"]
             },
             {
                 title: "Building C20 R40",
                 description: "Drone View 3DGS of a building",
-                url: "https://splatter.app/s/i15-cii"
+                url: "https://splatter.app/s/i15-cii",
+                tags: ["aerial"]
             },
             {
                 title: "Satellite Model OpenSource",
                 description: "Open source satellite 3DGS model",
-                url: "https://splatter.app/s/pbm-wy0"
+                url: "https://splatter.app/s/pbm-wy0",
+                tags: ["satellite"]
             },
             {
                 title: "Bicycle Model",
                 description: "3DGS model of a bicycle",
-                url: "https://splatter.app/s/4j9-rf1"
+                url: "https://splatter.app/s/4j9-rf1",
+                tags: ["ground"]
             },
             {
                 title: "MC Aerial Model",
                 description: "3DGS model of MC cityscape",
-                url: "https://splatter.app/s/dma-uoy"
+                url: "https://splatter.app/s/dma-uoy",
+                tags: ["aerial"]
             },
             {
                 title: "Griffith Park Observatory Model",
                 description: "3DGS opensource model of Griffith Park Observatory",
-                url: "https://splatter.app/s/h65-tdq"
+                url: "https://splatter.app/s/h65-tdq",
+                tags: ["ground"]
             }
         ];
+        
+        // Get all unique tags
+        const allTags = [...new Set(models.flatMap(m => m.tags))].sort();
+        let activeFilter = 'all';
+
+        // Create filter buttons
+        const filterContainer = document.getElementById('filterContainer');
+        const allBtn = document.createElement('button');
+        allBtn.className = 'filter-btn active';
+        allBtn.textContent = 'All';
+        allBtn.onclick = () => filterModels('all');
+        filterContainer.appendChild(allBtn);
+
+        allTags.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+            btn.onclick = () => filterModels(tag);
+            filterContainer.appendChild(btn);
+        });
 
         const gallery = document.getElementById('gallery');
 
-        models.forEach((model, index) => {
-            const card = document.createElement('div');
-            card.className = 'model-card';
-            card.style.animationDelay = `${0.1 * index}s`;
+        function renderGallery() {
+            gallery.innerHTML = '';
+            models.forEach((model, index) => {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+                card.id = `model-${index}`;
+                card.style.animationDelay = `${0.1 * index}s`;
+                
+                const tagsHTML = model.tags.map(tag => 
+                    `<span class="tag">${tag.charAt(0).toUpperCase() + tag.slice(1)}</span>`
+                ).join('');
+                
+                card.innerHTML = `
+                    <div class="model-header">
+                        <div class="model-title">${model.title}</div>
+                        <div class="model-description">${model.description}</div>
+                        <div class="model-tags">${tagsHTML}</div>
+                    </div>
+                    <div class="model-viewer">
+                        <button class="fullscreen-btn" onclick="openFullscreen('${model.url}')">
+                            View Fullscreen
+                        </button>
+                        <iframe src="${model.url}" allowfullscreen allow="xr-spatial-tracking"></iframe>
+                    </div>
+                `;
+                
+                gallery.appendChild(card);
+            });
+        }
+
+        function filterModels(tag) {
+            activeFilter = tag;
             
-            card.innerHTML = `
-                <div class="model-header">
-                    <div class="model-title">${model.title}</div>
-                    <div class="model-description">${model.description}</div>
-                </div>
-                <div class="model-viewer">
-                    <button class="fullscreen-btn" onclick="openFullscreen('${model.url}')">
-                        View Fullscreen
-                    </button>
-                    <iframe src="${model.url}" allowfullscreen allow="xr-spatial-tracking"></iframe>
-                </div>
-            `;
-            
-            gallery.appendChild(card);
-        });
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if (index === 0 && tag === 'all') {
+                    btn.classList.add('active');
+                } else if (btn.textContent.toLowerCase() === tag) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter and show/hide cards
+            models.forEach((model, index) => {
+                const card = document.getElementById(`model-${index}`);
+                if (tag === 'all' || model.tags.includes(tag)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        renderGallery();
 
         function openFullscreen(url) {
             window.open(url, '_blank');
