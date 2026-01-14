@@ -215,6 +215,51 @@
             border-color: rgba(102, 126, 234, 1);
         }
 
+        .filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 10px;
+            align-self: center;
+            font-weight: 600;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .filter-btn.active {
+            background: rgba(102, 126, 234, 0.9);
+            border-color: rgba(102, 126, 234, 1);
+        }
+
         .model-tags {
             display: flex;
             gap: 8px;
@@ -241,7 +286,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>3DGS Model Gallery - Elm CV Team</h1>
+            <h1>3DGS & Point Cloud Gallery - Elm CV Team</h1>
             <p class="subtitle">Explore stunning 3D Gaussian Splatting models leveraging Splatter App's LOD viewer</p>
         </header>
 
@@ -257,71 +302,136 @@
                 title: "Residence C20 R4",
                 description: "Drone View 3DGS of a residence",
                 url: "https://splatter.app/s/r24-kks",
+                type: "3dgs",
                 tags: ["aerial"]
             },
             {
                 title: "Building C20 R40",
                 description: "Drone View 3DGS of a building",
                 url: "https://splatter.app/s/i15-cii",
+                type: "3dgs",
                 tags: ["aerial"]
             },
             {
                 title: "Satellite Model OpenSource",
                 description: "Open source satellite 3DGS model",
                 url: "https://splatter.app/s/pbm-wy0",
+                type: "3dgs",
                 tags: ["satellite"]
             },
             {
                 title: "Bicycle Model",
                 description: "3DGS model of a bicycle",
                 url: "https://splatter.app/s/4j9-rf1",
+                type: "3dgs",
                 tags: ["ground"]
             },
             {
                 title: "MC Aerial Model",
                 description: "3DGS model of MC cityscape",
                 url: "https://splatter.app/s/dma-uoy",
+                type: "3dgs",
                 tags: ["aerial"]
             },
             {
                 title: "Griffith Park Observatory Model",
                 description: "3DGS opensource model of Griffith Park Observatory",
                 url: "https://splatter.app/s/h65-tdq",
+                type: "3dgs",
                 tags: ["ground"]
             },
             {
                 title: "Satellite Model 2",
                 description: "Open source satellite 3DGS model 2",
                 url: "https://splatter.app/s/gxd-9e6",
+                type: "3dgs",
                 tags: ["satellite"]
             },
             {
                 title: "Satellite Model 3",
                 description: "Open source satellite 3DGS model 3",
                 url: "https://splatter.app/s/vkz-8e2",
+                type: "3dgs",
                 tags: ["satellite"]
+            },
+            {
+                title: "VR Eclepens",
+                description: "Point Cloud model of Eclepens for VR",
+                url: "https://potree.org/potree/examples/vr_eclepens.html",
+                type: "pointcloud",
+                tags: ["aerial"]
+            },
+            {
+                title: "Lion",
+                description: "Point Cloud model of a lion for VR",
+                url: "https://potree.org/potree/examples/vr_lion.html",
+                type: "pointcloud",
+                tags: ["ground"]
+            },
+            {
+                title: "Armadillo",
+                description: "Point Cloud model of Heidentor for VR",
+                url: "https://potree.org/potree/examples/vr_heidentor.html",
+                type: "pointcloud",
+                tags: ["ground"]
+            },
+            {
+                title: "Farmland",
+                description: "Point Cloud model of farmland",
+                url: "https://potree.org/potree/examples/viewer.html",
+                type: "pointcloud",
+                tags: ["aerial"]
             }
         ];
         
         // Get all unique tags
         const allTags = [...new Set(models.flatMap(m => m.tags))].sort();
-        let activeFilter = 'all';
-
+        let activeTypeFilter = '3dgs';
+        let activeTagFilter = 'all';
+        
         // Create filter buttons
         const filterContainer = document.getElementById('filterContainer');
-        const allBtn = document.createElement('button');
-        allBtn.className = 'filter-btn active';
-        allBtn.textContent = 'All';
-        allBtn.onclick = () => filterModels('all');
-        filterContainer.appendChild(allBtn);
-
+        
+        // Format filter row
+        const formatRow = document.createElement('div');
+        formatRow.className = 'filter-row';
+        formatRow.innerHTML = '<span class="filter-label">Format:</span>';
+        
+        const formatTypes = [
+            { value: '3dgs', label: '3D Gaussian Splats' },
+            { value: 'pointcloud', label: 'Point Clouds' }
+        ];
+        
+        formatTypes.forEach(format => {
+            const btn = document.createElement('button');
+            btn.className = format.value === '3dgs' ? 'filter-btn active' : 'filter-btn';
+            btn.textContent = format.label;
+            btn.onclick = () => filterByType(format.value);
+            formatRow.appendChild(btn);
+        });
+        
+        filterContainer.appendChild(formatRow);
+        
+        // Source filter row
+        const sourceRow = document.createElement('div');
+        sourceRow.className = 'filter-row';
+        sourceRow.innerHTML = '<span class="filter-label">Source:</span>';
+        
+        const allSourceBtn = document.createElement('button');
+        allSourceBtn.className = 'filter-btn active';
+        allSourceBtn.textContent = 'All';
+        allSourceBtn.onclick = () => filterByTag('all');
+        sourceRow.appendChild(allSourceBtn);
+        
         allTags.forEach(tag => {
             const btn = document.createElement('button');
             btn.className = 'filter-btn';
             btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
-            btn.onclick = () => filterModels(tag);
-            filterContainer.appendChild(btn);
+            btn.onclick = () => filterByTag(tag);
+            sourceRow.appendChild(btn);
         });
+        
+        filterContainer.appendChild(sourceRow);
 
         const gallery = document.getElementById('gallery');
 
@@ -331,6 +441,8 @@
                 const card = document.createElement('div');
                 card.className = 'model-card';
                 card.id = `model-${index}`;
+                card.dataset.type = model.type;
+                card.dataset.tags = model.tags.join(',');
                 card.style.animationDelay = `${0.1 * index}s`;
                 
                 const tagsHTML = model.tags.map(tag => 
@@ -353,25 +465,52 @@
                 
                 gallery.appendChild(card);
             });
+            
+            applyFilters();
         }
 
-        function filterModels(tag) {
-            activeFilter = tag;
+        function filterByType(type) {
+            activeTypeFilter = type;
             
-            // Update button states
-            document.querySelectorAll('.filter-btn').forEach((btn, index) => {
-                btn.classList.remove('active');
-                if (index === 0 && tag === 'all') {
-                    btn.classList.add('active');
-                } else if (btn.textContent.toLowerCase() === tag) {
-                    btn.classList.add('active');
+            // Update format button states
+            const formatRow = filterContainer.children[0];
+            Array.from(formatRow.children).forEach(child => {
+                if (child.tagName === 'BUTTON') {
+                    child.classList.remove('active');
+                    if (child.textContent.toLowerCase().includes(type === '3dgs' ? 'gaussian' : 'point')) {
+                        child.classList.add('active');
+                    }
                 }
             });
+            
+            applyFilters();
+        }
 
-            // Filter and show/hide cards
+        function filterByTag(tag) {
+            activeTagFilter = tag;
+            
+            // Update source button states
+            const sourceRow = filterContainer.children[1];
+            Array.from(sourceRow.children).forEach(child => {
+                if (child.tagName === 'BUTTON') {
+                    child.classList.remove('active');
+                    if ((tag === 'all' && child.textContent === 'All') || 
+                        child.textContent.toLowerCase() === tag) {
+                        child.classList.add('active');
+                    }
+                }
+            });
+            
+            applyFilters();
+        }
+
+        function applyFilters() {
             models.forEach((model, index) => {
                 const card = document.getElementById(`model-${index}`);
-                if (tag === 'all' || model.tags.includes(tag)) {
+                const matchesType = model.type === activeTypeFilter;
+                const matchesTag = activeTagFilter === 'all' || model.tags.includes(activeTagFilter);
+                
+                if (matchesType && matchesTag) {
                     card.classList.remove('hidden');
                 } else {
                     card.classList.add('hidden');
