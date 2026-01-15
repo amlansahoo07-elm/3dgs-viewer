@@ -28,26 +28,60 @@
             text-align: center;
             margin-bottom: 60px;
             animation: fadeInDown 0.8s ease;
-            background: #f5f5f5;
+
+            /* Option A: Soft Neutrals (very light, minimal contrast) */
+            /* background: linear-gradient(135deg, #ffffff 0%, #f5f6f7 50%, #eceff1 100%); */
+
+            /* Option B: Cool Greys (subtle blue-grey that pairs with #1e165b) */
+            /* background: linear-gradient(135deg, #fcfdff 0%, #f2f5fa 50%, #e6ebf2 100%); */
+
+            /* Option C: Subtle Depth (slightly stronger mid-grey) */
+            background: linear-gradient(135deg, #ffffff 0%, #d2d3d4 45%, #e5e7eb 100%);
+
+
+            /* background: linear-gradient(135deg, #e7e7e7 0%, #a8a8a8 50%); */
             padding: 40px 20px;
             border-radius: 15px;
-            width: 100%
+
+            /* Separation from dark page background */
+            border: 1px solid rgba(17, 24, 39, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header-logo {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 80px;
+            width: auto;
         }
 
         h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #1e165b 0%, #764ba2 100%);
+            color: #1e165b;
+            /* background: linear-gradient(135deg, #1e165b 0%, #764ba2 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-text-fill-color: transparent; */
+            /* background-clip: text; */
             margin-bottom: 10px;
             letter-spacing: -1px;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: #1e165b;
+            color: rgba(30, 22, 91, 0.9);
             font-weight: 300;
         }
 
@@ -149,18 +183,185 @@
             }
         }
 
-        @media (max-width: 768px) {
+               @media (max-width: 1200px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                padding: 0 20px;
+            }
+
             h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .header-logo {
+                height: 60px;
+                right: 20px;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 25px;
+                padding: 30px 20px;
+            }
+
+            .model-viewer {
+                height: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            header {
+                padding: 30px 15px;
+                margin-bottom: 40px;
+            }
+
+            h1 {
+                font-size: 2rem;
+                letter-spacing: -0.5px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .header-logo {
+                height: 50px;
+                right: 15px;
+            }
+
+            .filter-container {
+                gap: 10px;
+                margin-bottom: 30px;
+            }
+
+            .filter-row {
+                gap: 8px;
+            }
+
+            .filter-label {
+                font-size: 0.85rem;
+                margin-right: 5px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
             }
 
             .gallery {
                 grid-template-columns: 1fr;
                 gap: 20px;
+                padding: 20px 15px;
+            }
+
+            .model-card {
+                border-radius: 15px;
+            }
+
+            .model-header {
+                padding: 15px;
+            }
+
+            .model-title {
+                font-size: 1.1rem;
+            }
+
+            .model-description {
+                font-size: 0.85rem;
             }
 
             .model-viewer {
                 height: 400px;
+            }
+
+            .fullscreen-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                top: 10px;
+                right: 10px;
+            }
+
+            .tag {
+                font-size: 0.75rem;
+                padding: 3px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .header-logo {
+                height: 40px;
+                right: 10px;
+            }
+
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .filter-label {
+                font-size: 0.8rem;
+            }
+
+            .model-viewer {
+                height: 300px;
+            }
+
+            .model-title {
+                font-size: 1rem;
+            }
+
+            .fullscreen-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Landscape orientation for tablets */
+        @media (min-width: 768px) and (max-width: 1668px) and (orientation: landscape) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            }
+
+            .model-viewer {
+                height: 400px;
+            }
+        }
+
+        /* iPad specific optimizations */
+        @media only screen 
+        and (min-device-width: 768px) 
+        and (max-device-width: 1668px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+
+            .model-viewer {
+                height: 450px;
             }
         }
 
@@ -185,7 +386,7 @@
             color: #667eea;
         }
 
-                .filter-container {
+        .filter-container {
             display: flex;
             gap: 12px;
             margin-bottom: 40px;
@@ -286,8 +487,11 @@
 <body>
     <div class="container">
         <header>
-            <h1>3DGS & Point Cloud Gallery - Elm CV Team</h1>
-            <p class="subtitle">Explore stunning 3D Gaussian Splatting models leveraging Splatter App's LOD viewer</p>
+            <div class="header-content">
+                <h1>3DGS & Point Cloud Gallery</h1>
+                <p class="subtitle">Explore stunning 3D Gaussian Splatting and Point Cloud models</p>
+            </div>
+            <img src="assets/elm_logo.png" alt="Elm Logo" class="header-logo">
         </header>
 
         <div class="filter-container" id="filterContainer"></div>
@@ -298,6 +502,13 @@
     <script>
         // ADD SPLATTER APP LINKS HERE
         const models = [
+            {
+                title: "Bristol Drone Monument",
+                description: "3DGS model of Bristol Monument",
+                url: "https://splatter.app/s/qnx-ka5",
+                type: "3dgs",
+                tags: ["aerial"]
+            },
             {
                 title: "Residence C20 R4",
                 description: "Drone View 3DGS of a residence",
@@ -369,7 +580,7 @@
                 tags: ["ground"]
             },
             {
-                title: "Armadillo",
+                title: "Heidentor VR",
                 description: "Point Cloud model of Heidentor for VR",
                 url: "https://potree.org/potree/examples/vr_heidentor.html",
                 type: "pointcloud",
